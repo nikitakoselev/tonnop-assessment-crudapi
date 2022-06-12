@@ -1,12 +1,29 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework import authentication, permissions
 from django.contrib.auth.models import User
 
 
 from .models import Employee
-from .serializers import GetEmployeeSerializer,  PostEmployeeSerializer
+from .serializers import GetEmployeeSerializer,  PostEmployeeSerializer, RegisterUserSerializer
+
+
+
+class RegisterUserView(APIView):
+    permission_classess = []
+    def post(self, request):
+        serializer = RegisterUserSerializer(request.data)
+        if serializer.is_valid:
+            email = serializer.data.get('email')
+            username = serializer.data.get('username')
+            password = serializer.data.get('password')
+
+            User.objects.create_user(email, username, password)
+            data = {"message": "User %s created successfully" % username}
+            return Response(data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_201_CREATED)
 
 # Create your views here.
 class GetEmployeesView(APIView):
