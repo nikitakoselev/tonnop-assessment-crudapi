@@ -1,5 +1,15 @@
 from rest_framework import serializers
+from django.core.validators import MinLengthValidator
 from .models import Employee
+from .validators import validate_email, validate_username, validate_password
+
+class RegisterUserSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True, validators=[validate_email])
+    username = serializers.CharField(required=True, validators=[validate_username])
+    password = serializers.CharField(
+        required=True, validators=[validate_password]
+    )
+
 
 class GetEmployeeSerializer(serializers.ModelSerializer):
 
@@ -10,11 +20,29 @@ class GetEmployeeSerializer(serializers.ModelSerializer):
 
 
 class PostEmployeeSerializer(serializers.ModelSerializer):
-    first_name = serializers.CharField(required=True)
-    last_name = serializers.CharField(required=True)
-    email = serializers.EmailField(required=True)
-    reg_number = serializers.CharField(required=True)
-    department = serializers.CharField(required=True)
+    first_name = serializers.CharField(required=True,  validators=[MinLengthValidator(
+                limit_value=3,
+                message="First name must be longer than 3 characters"
+            )
+        ],)
+    last_name = serializers.CharField(required=True,
+        validators=[MinLengthValidator(
+                    limit_value=3,
+                    message="Last name must be longer than 3 characters"
+                )
+            ])
+    email = serializers.EmailField(required=True, validators=[validate_email])
+    reg_number = serializers.CharField(required=True, validators=[MinLengthValidator(
+                limit_value=5,
+                message="Registration keys must be longer than 5 characters"
+            )
+        ])
+    department = serializers.CharField(required=True, 
+    validators=[MinLengthValidator(
+                limit_value=2,
+                message="Department must be longer than 2 characters."
+            )
+        ])
 
     class Meta:
         model = Employee
