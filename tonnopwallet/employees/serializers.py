@@ -2,13 +2,23 @@ from rest_framework import serializers
 from django.core.validators import MinLengthValidator
 from .models import Employee
 from .validators import validate_email, validate_username, validate_password
-
+from django.contrib.auth.models import User
 class RegisterUserSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True, validators=[validate_email])
     username = serializers.CharField(required=True, validators=[validate_username])
     password = serializers.CharField(
         required=True, validators=[validate_password]
     )
+
+    class Meta:
+        model = User
+        fields = ('username','password','email')
+        extra_kwargs = {
+            'password':{'write_only': True},
+        }
+    def create(self, validated_data):
+        user = User.objects.create_user(validated_data['username'], password = validated_data['password']  ,email=validated_data['email'])
+        return user
 
 
 class GetEmployeeSerializer(serializers.ModelSerializer):
