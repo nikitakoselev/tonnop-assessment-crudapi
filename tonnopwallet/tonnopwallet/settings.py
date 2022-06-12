@@ -3,9 +3,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-from datetime import timedelta
 
-
+import django_heroku
+import dj_database_url
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 load_dotenv()
@@ -65,6 +65,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'tonnopwallet.wsgi.application'
 
 
+
+
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -78,6 +80,7 @@ DATABASES = {
         'PORT': os.getenv('PORT'),
     }
 }
+DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 
 # Password validation
@@ -110,14 +113,9 @@ USE_I18N = True
 
 USE_TZ = True
 
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
-)
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -128,3 +126,5 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': PAGINATION_CLASS,
     'PAGE_SIZE': 30,
 }
+
+django_heroku.settings(locals())
