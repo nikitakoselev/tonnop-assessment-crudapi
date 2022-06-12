@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-from .models import Employee
+from .models import EmployeeModel
 from .serializers import GetEmployeeSerializer,  PostEmployeeSerializer
 
 
@@ -14,7 +14,7 @@ class GetEmployeesView(APIView):
      permission_classes = []
 
      def get(self, request, format=None):
-        employees = Employee.objects.all()
+        employees = EmployeeModel.objects.all()
         serializer = GetEmployeeSerializer
         if serializer.is_valid:
             data = serializer(employees, many=True).data
@@ -31,7 +31,7 @@ class GetEmployeeView(APIView):
     permission_classes = []
 
     def get(self, request, pk, format=None):
-        employee = Employee.objects.get(id=pk)
+        employee = EmployeeModel.objects.get(id=pk)
         serializer = GetEmployeeSerializer
         if serializer.is_valid:
             data = serializer(employee, many=False).data
@@ -64,7 +64,7 @@ class UpdateEmployeeView(APIView):
      permission_classes = []
 
      def put(self, request, pk, *args, **kwargs):
-        comment = Employee.objects.get(pk=pk)
+        comment = EmployeeModel.objects.get(pk=pk)
         data = request.data
         serializer = PostEmployeeSerializer
         serializer = serializer(instance=comment, data=data, partial=True)
@@ -73,13 +73,13 @@ class UpdateEmployeeView(APIView):
             return Response(
                 data=dict(
                     status="success",
-                    message=f"Employee {pk} is successfully updated!"
+                    message=f"Employee with id {pk} is successfully updated!"
                 ),
                 status=200)
         return Response(
             data=dict(
                 status="Failed",
-                message=f"Employee {pk} is not successfully updated!"
+                message=f"Employee with id {pk} is not successfully updated!"
             ),
             status=400)
 
@@ -92,11 +92,11 @@ class DeleteEmployeeView(APIView):
      permission_classes = []
 
      def delete(self, request, pk, *args, **kwargs):
-        comment = Employee.objects.get(pk=pk)
+        comment = EmployeeModel.objects.get(pk=pk)
         comment.delete()
         return Response(
             data=dict(
                 status="success",
-                message=f"Employee {pk} is successfully deleted!"
+                message=f"Employee with id {pk} is successfully deleted!"
             ),
             status=200)
