@@ -1,29 +1,12 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import authentication, permissions
-from django.contrib.auth.models import User
 
 
 from .models import Employee
-from .serializers import GetEmployeeSerializer,  PostEmployeeSerializer, RegisterUserSerializer
+from .serializers import GetEmployeeSerializer,  PostEmployeeSerializer
 
 
-
-class RegisterUserView(APIView):
-    permission_classess = []
-    def post(self, request):
-        serializer = RegisterUserSerializer(request.data)
-        if serializer.is_valid:
-            email = serializer.data.get('email')
-            username = serializer.data.get('username')
-            password = serializer.data.get('password')
-
-            User.objects.create_user(email, username, password)
-            data = {"message": "User %s created successfully" % username}
-            return Response(data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_201_CREATED)
 
 # Create your views here.
 class GetEmployeesView(APIView):
@@ -81,13 +64,11 @@ class UpdateEmployeeView(APIView):
      permission_classes = []
 
      def put(self, request, pk, *args, **kwargs):
-        # user = request.user
         comment = Employee.objects.get(pk=pk)
         data = request.data
         serializer = PostEmployeeSerializer
         serializer = serializer(instance=comment, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
-            # if user == comment.author:
             serializer.save()
             return Response(
                 data=dict(
@@ -95,12 +76,6 @@ class UpdateEmployeeView(APIView):
                     message=f"Employee {pk} is successfully updated!"
                 ),
                 status=200)
-            # return Response(
-            #     data=dict(
-            #         status="Fail",
-            #         message="You are not authorised to update the comment."
-            #     ),
-            #     status=400)
         return Response(
             data=dict(
                 status="Failed",
@@ -117,9 +92,7 @@ class DeleteEmployeeView(APIView):
      permission_classes = []
 
      def delete(self, request, pk, *args, **kwargs):
-        # user = request.user
         comment = Employee.objects.get(pk=pk)
-        # if user == comment.author:
         comment.delete()
         return Response(
             data=dict(
@@ -127,9 +100,3 @@ class DeleteEmployeeView(APIView):
                 message=f"Employee {pk} is successfully deleted!"
             ),
             status=200)
-        # return Response(
-        #     data=dict(
-        #         status="Fail",
-        #         message="Youa are not authorised to delete comment."
-        #     ),
-        #     status=400)
