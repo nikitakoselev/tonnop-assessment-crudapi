@@ -1,12 +1,12 @@
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import CommonPasswordValidator
-
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 
 common = CommonPasswordValidator()
 
 
-def validate_password(value, length=8):  # tested
+def validate_password(value, length=8) -> str:
     """Somewhat strict validator, returns True once all
     test cases pass, raises a ValidationError if it fails a test."""
     if len(value) < length:
@@ -17,7 +17,8 @@ def validate_password(value, length=8):  # tested
             "Password is a common password, vulnerable to brute force attacks."
         )
     
-    return True
+    if value:
+        return make_password(value)
 
 
 
