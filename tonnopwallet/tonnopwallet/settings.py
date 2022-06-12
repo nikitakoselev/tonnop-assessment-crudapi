@@ -29,7 +29,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'rest_framework_simplejwt',
     'employees'
 ]
 
@@ -128,16 +127,5 @@ PAGINATION_CLASS = 'rest_framework.pagination.PageNumberPagination'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': PAGINATION_CLASS,
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication'
-    ],
     'PAGE_SIZE': 30,
 }
-
-SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(hours=1)}
-
-LOGIN_URL = '/api/v1/admin/login/'
